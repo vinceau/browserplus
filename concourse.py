@@ -1,9 +1,8 @@
 import logging
 import sys
 import time
+from browserplus import BrowserPlus
 from getpass import getpass
-from lxml import html
-from mechanize import Browser
 from subprocess import Popen, PIPE
 from urllib import quote_plus
 from urlparse import urlparse, parse_qs, urljoin
@@ -30,11 +29,7 @@ _CAMPUS_DICT = {
 _log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
-_browser = Browser()
-_browser.set_handle_robots(False)
-_browser.addheaders = [('Accept',
-    'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')]
-
+_browser = BrowserPlus()
 
 class User(object):
 
@@ -194,18 +189,10 @@ def _gen_search_url(name, section="Any", session="", year=""):
     searchString += "&session=" + quote_plus(session)
     return searchString
 
-def _has_message(msg):
-    """This returns true if the string provided in msg is contained in the
-    browsers current page.
-    """
-    tree = html.fromstring(_browser.response().read())
-    return msg in tree.xpath('string()')
-
 def _is_logged_in():
     #wrapped in try block since this can be called before a page load
     try:
-        tree = html.fromstring(_browser.response().read())
-        menu = tree.cssselect('nav#l1-nav ul.navbar-right')[0]
+        menu = _browser.get('nav#l1-nav ul.navbar-right')
         return "Login" not in menu.xpath('string()')
     except:
         return False
@@ -215,17 +202,12 @@ def _login():
     password = getpass("Enter your Concourse password: ")
     _browser.open("https://anu.campusconcourse.com/login")
 
-    formcount = 0
-    for frm in _browser.forms():
-        if str(frm.attrs["action"])=="login":
-            break
-        formcount += 1
-    _browser.select_form(nr=formcount)
+    _browser.select_form_by("action", "login")
     _browser["email"] = username
     _browser["password"] = password
     _browser.submit()
     errormsg = "The information you provided does not match our records"
-    return not _has_message(errormsg)
+    return not _browser.contains(errormsg)
 
 def _require_login():
     while not _is_logged_in():
@@ -248,12 +230,10 @@ def get_user(unumber):
     page = "https://anu.campusconcourse.com/admin_users?keyword=" + unumber
     _browser.open(page)
     errormsg = "No users found. Please try again."
-    if _has_message(errormsg):
+    if _browser.contains(errormsg):
         return None
 
-    tree = html.fromstring(_browser.response().read())
-    table = tree.cssselect('div.table-responsive')[0]
-
+    table = _browser.get('div.table-responsive')
     firstname = table.cssselect('td')[0].text
     lastname = table.cssselect('td')[1].text
     return User(unumber, firstname, lastname)
@@ -273,13 +253,12 @@ def find_course(shortname, exact=True, section="Any"):
         return False
     _browser.open(url)
     errormsg = 'No results found.'
-    return not _has_message(errormsg)
+    return not _browser.contains(errormsg)
 
 def get_course_url(name, exact=True, section="Any"):
     if not find_course(name, exact, section):
         return ""
-    tree = html.fromstring(_browser.response().read())
-    table = tree.get_element_by_id('results_table')
+    table = _browser.get('#results_table')
     return urljoin(_browser.geturl(), table.find('.//a').attrib['href'])
 
 def get_course_id(shortname, exact=True, section="Any"):
@@ -289,8 +268,7 @@ def get_course_id(shortname, exact=True, section="Any"):
     return parse_qs(urlparse(site).query)['course_id'][0]
 
 def _get_permission_code(name):
-    root = html.fromstring(_browser.response().read())
-    e = root.xpath('.//option[text()="%s"]' % name)
+    e = _browser.get('#groups').xpath('.//option[text()="%s"]' % name)
     if len(e) > 0:
         return e[0].get('value')
     return None
@@ -312,7 +290,7 @@ def set_lecturer(shortname, uid, group):
     query = "?course_id=" + courseid
     _browser.open(page + query)
 
-    if _has_message("%s, %s" % (user.lastname, user.firstname)):
+    if _browser.contains("%s, %s" % (user.lastname, user.firstname)):
         _log.debug('%s is already teaching %s' % (user.firstname, shortname))
         return False
     
@@ -321,13 +299,7 @@ def set_lecturer(shortname, uid, group):
         _log.error("Can't find group: %s" % group)
         return False
     
-    #find and select the correct form
-    formcount = 0
-    for frm in _browser.forms():
-        if str(frm.attrs["action"]) == "add_users":
-            break
-        formcount += 1
-    _browser.select_form(nr=formcount)
+    _browser.select_form_by("action", "add_users")
 
     #fix the info
     _browser["emails"] = user.email
@@ -335,7 +307,7 @@ def set_lecturer(shortname, uid, group):
     _browser.submit()
 
     errormsg = "No new users were added to the course."
-    return not _has_message(errormsg)
+    return not _browser.contains(errormsg)
 
 def transform_course(shortname):
     """This will find a draft version of an existing course and transform it to
@@ -352,13 +324,8 @@ def transform_course(shortname):
     query = "?course_id=" + courseid
     _browser.open(page1 + query)
 
-    #find and select the correct form
-    formcount = 0
-    for frm in _browser.forms():
-        if str(frm.attrs["action"]) == "edit_course_information" + query:
-            break
-        formcount += 1
-    _browser.select_form(nr=formcount)
+    search = "edit_course_information" + query
+    _browser.select_form_by("action", search)
 
     #fix the info
     course = Course(shortname)
@@ -368,24 +335,18 @@ def transform_course(shortname):
 
     #check if okay
     msg = "Course info has been updated!"
-    if not _has_message(msg):
-        log.error("Error occured while attempting to change %s settings" %
+    if not _browser.contains(msg):
+        _log.error("Error occured while attempting to change %s settings" %
                 course.name)
         return False
 
     #change required course info
     page2 = "https://anu.campusconcourse.com/edit_required_course_information"
     _browser.open(page2 + query)
-
-    #find and select correct form
-    formcount = 0
-    for frm in _browser.forms():
-        search = "edit_required_course_information" + query
-        if str(frm.attrs["action"]) == search:
-            break
-        formcount += 1
-    _browser.select_form(nr=formcount)
-
+    
+    search = "edit_required_course_information" + query
+    _browser.select_form_by("action", search)
+    
     #fix the info
     _browser["campus_id"] = [str(_CAMPUS_DICT["Draft"])]
     _browser["start_date"] = course.year + "-01-01"
@@ -393,7 +354,7 @@ def transform_course(shortname):
     _browser.submit()
 
     msg = "Required course information has been updated!"
-    return _has_message(msg)
+    return _browser.contains(msg)
 
 def _get_shared_secret():
     _require_login()
