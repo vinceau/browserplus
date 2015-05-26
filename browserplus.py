@@ -23,10 +23,10 @@ class BrowserPlus(Browser):
     def _tree(self):
         return html.fromstring(self.response().read())
 
-    def select_form_by(self, attr, idname):
+    def select_form_by(self, attr, search):
         formcount = 0
         for frm in self.forms():
-            if str(frm.attrs[attr])==idname:
+            if str(frm.attrs[attr]) == search:
                 break
             formcount += 1
         return self.select_form(nr=formcount)
