@@ -356,13 +356,14 @@ def transform_course(shortname):
     msg = "Required course information has been updated!"
     return _browser.contains(msg)
 
-def _get_shared_secret():
+def _get_secret_key():
     _require_login()
     _browser.open('https://anu.campusconcourse.com/admin_process_feed')
+    return _browser.get('#shared_secret').get('value')
 
 def process_feed(feedtype, filename):
     url = "https://anu.campusconcourse.com/process_feed_file"
-    secret = "j4RGQbUo56ZMcZtIU1dA"
+    secret = _get_secret_key()
 
     #HMAC=`cat $FILENAME | openssl dgst -sha256 -hmac $SECRET | cut -d' ' -f2`
     p1 = Popen(['cat', filename], stdout=PIPE)
