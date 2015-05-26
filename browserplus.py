@@ -18,9 +18,9 @@ class BrowserPlus(Browser):
         """This returns true if the string provided in msg is contained in the
         browsers current page.
         """
-        return msg in self.tree().xpath('string()')
+        return msg in self._tree().xpath('string()')
 
-    def tree(self):
+    def _tree(self):
         return html.fromstring(self.response().read())
 
     def select_form_by(self, attr, idname):
@@ -35,10 +35,15 @@ class BrowserPlus(Browser):
         """Returns the first occurence of an element matching the css selector
         if it exists and None otherwise
         """
-        e = self.tree().cssselect(css)
+        e = self.get_all(css)
         if e:
             return e[0]
         return None
+
+    def get_all(self, css):
+        """Returns a list of all elements that match the css selector
+        """
+        return self._tree().cssselect(css)
 
     def go(self, text):
         try:
