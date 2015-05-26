@@ -17,9 +17,8 @@ class BrowserPlus(Browser):
     def _tree(self):
         return html.fromstring(self.response().read())
 
-    def contains(self, msg):
-        """This returns true if the string provided in msg is contained in the
-        browsers current page.
+    def has(self, msg):
+        """This returns true if msg is contained in the browsers current page.
         """
         return msg in self._tree().xpath('string()')
 

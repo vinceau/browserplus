@@ -207,7 +207,7 @@ def _login():
     _browser["password"] = password
     _browser.submit()
     errormsg = "The information you provided does not match our records"
-    return not _browser.contains(errormsg)
+    return not _browser.has(errormsg)
 
 def _require_login():
     while not _is_logged_in():
@@ -230,7 +230,7 @@ def get_user(unumber):
     page = "https://anu.campusconcourse.com/admin_users?keyword=" + unumber
     _browser.open(page)
     errormsg = "No users found. Please try again."
-    if _browser.contains(errormsg):
+    if _browser.has(errormsg):
         return None
 
     table = _browser.get('div.table-responsive')
@@ -253,7 +253,7 @@ def find_course(shortname, exact=True, section="Any"):
         return False
     _browser.open(url)
     errormsg = 'No results found.'
-    return not _browser.contains(errormsg)
+    return not _browser.has(errormsg)
 
 def get_course_url(name, exact=True, section="Any"):
     if not find_course(name, exact, section):
@@ -290,7 +290,7 @@ def set_lecturer(shortname, uid, group):
     query = "?course_id=" + courseid
     _browser.open(page + query)
 
-    if _browser.contains("%s, %s" % (user.lastname, user.firstname)):
+    if _browser.has("%s, %s" % (user.lastname, user.firstname)):
         _log.debug('%s is already teaching %s' % (user.firstname, shortname))
         return False
     
@@ -307,7 +307,7 @@ def set_lecturer(shortname, uid, group):
     _browser.submit()
 
     errormsg = "No new users were added to the course."
-    return not _browser.contains(errormsg)
+    return not _browser.has(errormsg)
 
 def transform_course(shortname):
     """This will find a draft version of an existing course and transform it to
@@ -335,7 +335,7 @@ def transform_course(shortname):
 
     #check if okay
     msg = "Course info has been updated!"
-    if not _browser.contains(msg):
+    if not _browser.has(msg):
         _log.error("Error occured while attempting to change %s settings" %
                 course.name)
         return False
@@ -354,7 +354,7 @@ def transform_course(shortname):
     _browser.submit()
 
     msg = "Required course information has been updated!"
-    return _browser.contains(msg)
+    return _browser.has(msg)
 
 def _get_secret_key():
     _require_login()
