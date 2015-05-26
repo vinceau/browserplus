@@ -13,17 +13,19 @@ class BrowserPlus(Browser):
         self.set_handle_robots(False)
         self.addheaders = [('Accept',
             'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')]
-        
+
+    def _tree(self):
+        return html.fromstring(self.response().read())
+
     def contains(self, msg):
         """This returns true if the string provided in msg is contained in the
         browsers current page.
         """
         return msg in self._tree().xpath('string()')
 
-    def _tree(self):
-        return html.fromstring(self.response().read())
-
     def select_form_by(self, attr, search):
+        """Usage: BrowserPlus.select_form_by('id', 'login')
+        """
         formcount = 0
         for frm in self.forms():
             if str(frm.attrs[attr]) == search:
@@ -46,6 +48,10 @@ class BrowserPlus(Browser):
         return self._tree().cssselect(css)
 
     def go(self, text):
+        """Follow the link (a href) containing certain text.
+        e.g. <a href="http://foo.bar">foobar</a> BrowserPlus.go('foobar') will
+        open the link htp://foo.bar
+        """
         try:
             return self.follow_link(text_regex=text)
         except:
