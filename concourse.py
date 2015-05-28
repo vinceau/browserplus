@@ -224,7 +224,7 @@ def is_valid_uid(username):
 
 def get_user(unumber):
     if not is_valid_uid(unumber):
-        _log.error("%s is not a valid unumber" % unumber)
+        _log.error("%s is not a valid unumber", unumber)
         return None
 
     _require_login()
@@ -278,12 +278,12 @@ def _get_permission_code(name):
 def set_lecturer(shortname, uid, group):
     courseid = get_course_id(shortname, True, "Draft")
     if not courseid or not _validShortname(shortname):
-        _log.error("Cannot find %s" % shortname)
+        _log.error("Cannot find %s", shortname)
         return False
 
     user = get_user(uid)
     if not user:
-        _log.error("%s is not in the concourse user database" % uid)
+        _log.error("%s is not in the concourse user database", uid)
         return False
 
     #check and see if the user is there
@@ -293,12 +293,12 @@ def set_lecturer(shortname, uid, group):
     _browser.open(page + query)
 
     if _browser.has("%s, %s" % (user.lastname, user.firstname)):
-        _log.debug('%s is already teaching %s' % (user.firstname, shortname))
+        _log.debug('%s is already teaching %s', user.firstname, shortname)
         return False
-    
+
     code = _get_permission_code(group)
     if not code:
-        _log.error("Can't find group: %s" % group)
+        _log.error("Can't find group: %s", group)
         return False
     
     _browser.select_form_by("action", "add_users")
@@ -338,8 +338,8 @@ def transform_course(shortname):
     #check if okay
     msg = "Course info has been updated!"
     if not _browser.has(msg):
-        _log.error("Error occured while attempting to change %s settings" %
-                course.name)
+        _log.error("Error occured while attempting to change %s settings",
+                   course.name)
         return False
 
     #change required course info
