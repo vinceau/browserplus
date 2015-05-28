@@ -9,21 +9,21 @@ from urlparse import urlparse, parse_qs, urljoin
 
 # CONFIGURATION CONSTANTS
 _SEARCH_STRING_DICT = {
-        "AUT" : "Autumn",
-        "YEAR" : "Full year",
-        "SUM" : "Summer",
-        "SEM1" : "Semester 1",
-        "SEM2" : "Semester 2",
-        "SPR" : "Spring",
-        "WIN" : "Winter"
-        }
+    "AUT" : "Autumn",
+    "YEAR" : "Full year",
+    "SUM" : "Summer",
+    "SEM1" : "Semester 1",
+    "SEM2" : "Semester 2",
+    "SPR" : "Spring",
+    "WIN" : "Winter"
+}
 
 _CAMPUS_DICT = {
-        "Unused_Draft" : 4,
-        "Final" : 3,
-        "Draft" : 2,
-        "Any" : -1
-        }
+    "Unused_Draft" : 4,
+    "Final" : 3,
+    "Draft" : 2,
+    "Any" : -1
+}
 
 
 _log = logging.getLogger(__name__)
@@ -112,17 +112,19 @@ class CourseFeed(object):
         return filename
 
     def add_course(self, shortname, title, dept, template, convener="",
-            units="6", method="In Person"):
+                   units="6", method="In Person"):
         c = Course(shortname)
         sy = c.year[-2:] #short year (last two digits of year)
         subject = c.name[:4]
         code = c.name[4:]
         string = (
-                "%s_Draft|%s|DRAFT|%s|01/01/%s|12/01/%s|%s|Australia/Sydney|"
-                "%s|%s|%s|%s|%s|%s|%s|1|1|0\n"
-                )
-        line = string % (c.name, title, dept, sy, sy, template,
-                subject, code, convener, c.session, c.year, units, method)
+            "%s_Draft|%s|DRAFT|%s|01/01/%s|12/01/%s|%s|Australia/Sydney|"
+            "%s|%s|%s|%s|%s|%s|%s|1|1|0\n"
+            )
+        line = string % (
+            c.name, title, dept, sy, sy, template, subject, code, convener,
+            c.session, c.year, units, method
+        )
         self.courses[shortname] = line
 
 
@@ -181,7 +183,7 @@ def _gen_search_url(name, section="Any", session="", year=""):
     subject = name[:4]
     code = name[4:]
     searchString = ("https://anu.campusconcourse.com/search?search_performed=1"
-            "&sort_by=year&descend=true")
+                    "&sort_by=year&descend=true")
     searchString += "&prefix=" + subject
     searchString += "&number=" + code
     searchString += "&campus_id=" + str(_CAMPUS_DICT[section])
@@ -368,18 +370,19 @@ def process_feed(feedtype, filename):
     #HMAC=`cat $FILENAME | openssl dgst -sha256 -hmac $SECRET | cut -d' ' -f2`
     p1 = Popen(['cat', filename], stdout=PIPE)
     p2 = Popen(['openssl', 'dgst', '-sha256', '-hmac', secret],
-            stdin=p1.stdout, stdout=PIPE)
+               stdin=p1.stdout, stdout=PIPE)
     p1.stdout.close()
     p3 = Popen(['cut', '-d', ' ', '-f2'], stdin=p2.stdout,
-            stdout=PIPE)
+               stdout=PIPE)
     p2.stdout.close()
     hmac = p3.communicate()[0].strip()
 
     #curl --tlsv1 -F type=$TYPE -F hmac=$HMAC -F file=@$FILENAME $URL
-    cmd = 'curl --tlsv1 -F type=%s -F hmac=%s -F file=@%s %s' % (feedtype,
-            hmac, filename, url)
+    cmd = 'curl --tlsv1 -F type=%s -F hmac=%s -F file=@%s %s' % (
+        feedtype, hmac, filename, url
+    )
     p4 = Popen(cmd.split(' '), stdout=PIPE, stderr=PIPE)
-    out, err = p4.communicate()
+    out, _ = p4.communicate()
     exitcode = p4.returncode
     print(out)
     return exitcode
