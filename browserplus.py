@@ -73,3 +73,6 @@ class BrowserPlus(Browser):
         except:
             _log.error("Can't find link with text '%s'" % text)
             return None
+
+    def xpath(self, xpathstring):
+        return self._tree().xpath(xpathstring)
