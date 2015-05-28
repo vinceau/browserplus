@@ -192,7 +192,7 @@ def _gen_search_url(name, section="Any", session="", year=""):
 def _is_logged_in():
     #wrapped in try block since this can be called before a page load
     try:
-        menu = _browser.get('nav#l1-nav ul.navbar-right')
+        menu = _browser.find('nav#l1-nav ul.navbar-right')
         return "Login" not in menu.xpath('string()')
     except:
         return False
@@ -233,7 +233,7 @@ def get_user(unumber):
     if _browser.has(errormsg):
         return None
 
-    table = _browser.get('div.table-responsive')
+    table = _browser.find('div.table-responsive')
     firstname = table.cssselect('td')[0].text
     lastname = table.cssselect('td')[1].text
     return User(unumber, firstname, lastname)
@@ -258,7 +258,7 @@ def find_course(shortname, exact=True, section="Any"):
 def get_course_url(name, exact=True, section="Any"):
     if not find_course(name, exact, section):
         return ""
-    table = _browser.get('#results_table')
+    table = _browser.find('#results_table')
     return urljoin(_browser.geturl(), table.find('.//a').attrib['href'])
 
 def get_course_id(shortname, exact=True, section="Any"):
@@ -268,7 +268,7 @@ def get_course_id(shortname, exact=True, section="Any"):
     return parse_qs(urlparse(site).query)['course_id'][0]
 
 def _get_permission_code(name):
-    e = _browser.get('#groups').xpath('.//option[text()="%s"]' % name)
+    e = _browser.find('#groups').xpath('.//option[text()="%s"]' % name)
     if len(e) > 0:
         return e[0].get('value')
     return None
@@ -359,7 +359,7 @@ def transform_course(shortname):
 def _get_secret_key():
     _require_login()
     _browser.open('https://anu.campusconcourse.com/admin_process_feed')
-    return _browser.get('#shared_secret').get('value')
+    return _browser.find('#shared_secret').get('value')
 
 def process_feed(feedtype, filename):
     url = "https://anu.campusconcourse.com/process_feed_file"

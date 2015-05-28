@@ -32,16 +32,16 @@ class BrowserPlus(Browser):
             formcount += 1
         return self.select_form(nr=formcount)
    
-    def get(self, css):
+    def find(self, css):
         """Returns the first occurence of an element matching the css selector
         if it exists and None otherwise
         """
-        e = self.get_all(css)
+        e = self.find_all(css)
         if e:
             return e[0]
         return None
 
-    def get_all(self, css):
+    def find_all(self, css):
         """Returns a list of all elements that match the css selector
         """
         return self._tree().cssselect(css)
