@@ -46,6 +46,23 @@ class BrowserPlus(Browser):
         """
         return self._tree().cssselect(css)
 
+    def get(self, element, attr, value):
+        """Returns the first 'element' tags with 'value' as their attribute
+        'attr'. e.g. get('a', 'href', 'http://google.com') will return
+        the first <a> tag with a link to google.
+        """
+        e = self.get_all(element, attr, value)
+        if e:
+            return e[0]
+        return None
+
+    def get_all(self, element, attr, value):
+        """Returns a list of all 'element' tags with 'value' as their attribute
+        'attr'. e.g. get_all('a', 'href', 'http://google.com') will return
+        a list of all the <a> tags with links to google.
+        """
+        return self._tree().xpath("//%s[@%s='%s']" % (element, attr, value))
+
     def go(self, text):
         """Follow the link (a href) containing certain text.
         e.g. <a href="http://foo.bar">foobar</a> BrowserPlus.go('foobar') will
