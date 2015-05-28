@@ -11,8 +11,10 @@ class BrowserPlus(Browser):
     def __init__(self):
         Browser.__init__(self)
         self.set_handle_robots(False)
-        self.addheaders = [('Accept',
-            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')]
+        self.addheaders = [(
+            'Accept',
+            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+        )]
 
     def _tree(self):
         return html.fromstring(self.response().read())
@@ -47,7 +49,7 @@ class BrowserPlus(Browser):
         return self._tree().cssselect(css)
 
     def get(self, element, attr, value):
-        """Returns the first 'element' tags with 'value' as their attribute
+        """Returns the first 'element' tag with 'value' as their attribute
         'attr'. e.g. get('a', 'href', 'http://google.com') will return
         the first <a> tag with a link to google.
         """
