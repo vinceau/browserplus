@@ -300,10 +300,9 @@ def set_lecturer(shortname, uid, group):
     if not code:
         _log.error("Can't find group: %s", group)
         return False
-    
-    _browser.select_form_by("action", "add_users")
 
     #fix the info
+    _browser.select_form_by("action", "add_users")
     _browser["emails"] = user.email
     _browser["group_id"] = [code]
     _browser.submit()
@@ -326,10 +325,9 @@ def transform_course(shortname):
     query = "?course_id=" + courseid
     _browser.open(page1 + query)
 
+    #fix the info
     search = "edit_course_information" + query
     _browser.select_form_by("action", search)
-
-    #fix the info
     course = Course(shortname)
     _browser["session"] = [course.session]
     _browser["year"] = [course.year]
@@ -345,10 +343,10 @@ def transform_course(shortname):
     #change required course info
     page2 = "https://anu.campusconcourse.com/edit_required_course_information"
     _browser.open(page2 + query)
-    
+
     search = "edit_required_course_information" + query
     _browser.select_form_by("action", search)
-    
+
     #fix the info
     _browser["campus_id"] = [str(_CAMPUS_DICT["Draft"])]
     _browser["start_date"] = course.year + "-01-01"
