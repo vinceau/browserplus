@@ -1,3 +1,6 @@
+"""
+Concourse module used to automate concourse settings.
+"""
 import logging
 import sys
 import time
@@ -319,15 +322,15 @@ def transform_course(shortname):
     if not courseid:
         return False
 
-    #change course info
+    #select the first form
     _require_login()
     page1 = "https://anu.campusconcourse.com/change_course_settings"
     query = "?course_id=" + courseid
     _browser.open(page1 + query)
-
-    #fix the info
     search = "edit_course_information" + query
     _browser.select_form_by("action", search)
+
+    #fix the info
     course = Course(shortname)
     _browser["session"] = [course.session]
     _browser["year"] = [course.year]
@@ -340,10 +343,9 @@ def transform_course(shortname):
                    course.name)
         return False
 
-    #change required course info
+    #select the next form
     page2 = "https://anu.campusconcourse.com/edit_required_course_information"
     _browser.open(page2 + query)
-
     search = "edit_required_course_information" + query
     _browser.select_form_by("action", search)
 
@@ -380,9 +382,6 @@ def process_feed(feedtype, filename):
         feedtype, hmac, filename, url
     )
     p4 = Popen(cmd.split(' '), stdout=PIPE, stderr=PIPE)
-    out, _ = p4.communicate()
-    exitcode = p4.returncode
-    print(out)
-    return exitcode
-
+    print(p4.communicate()[0])
+    return p4.returncode
 
