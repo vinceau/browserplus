@@ -19,10 +19,13 @@ class BrowserPlus(Browser):
     def _tree(self):
         return html.fromstring(self.response().read())
 
+    def xpath(self, xpathstring):
+        return self._tree().xpath(xpathstring)
+
     def has(self, msg):
         """This returns true if msg is contained in the browsers current page.
         """
-        return msg in self._tree().xpath('string()')
+        return msg in self.xpath('string()')
 
     def select_form_by(self, attr, search):
         """Usage: BrowserPlus.select_form_by('id', 'login')
@@ -33,7 +36,7 @@ class BrowserPlus(Browser):
                 break
             formcount += 1
         return self.select_form(nr=formcount)
-   
+
     def find(self, css):
         """Returns the first occurence of an element matching the css selector
         if it exists and None otherwise
@@ -63,7 +66,7 @@ class BrowserPlus(Browser):
         'attr'. e.g. get_all('a', 'href', 'http://google.com') will return
         a list of all the <a> tags with links to google.
         """
-        return self._tree().xpath("//%s[@%s='%s']" % (element, attr, value))
+        return self.xpath("//%s[@%s='%s']" % (element, attr, value))
 
     def go(self, text):
         """Follow the link (a href) containing certain text.
@@ -73,8 +76,6 @@ class BrowserPlus(Browser):
         try:
             return self.follow_link(text_regex=text)
         except:
-            _log.error("Can't find link with text '%s'" % text)
+            _log.error("Can't find link with text '%s'", text)
             return None
 
-    def xpath(self, xpathstring):
-        return self._tree().xpath(xpathstring)
