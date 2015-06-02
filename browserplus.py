@@ -1,13 +1,19 @@
+"""BrowserPlus is a module which utilises lxml to provide simple methods to
+scrape information from the mechanize browser.
+"""
 import logging
 import sys
-from mechanize import Browser
+from mechanize import Browser, LinkNotFoundError
 from lxml import html
 
 _log = logging.getLogger(__name__)
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 
 class BrowserPlus(Browser):
-
+    """BrowserPlus extends the mechanize Browser providing extra functions and
+    robot handling by default. Has all the methods of the mechanize Browser
+    obviously but also has the web scraping capabilities of lxml.
+    """
     def __init__(self):
         Browser.__init__(self)
         self.set_handle_robots(False)
@@ -17,9 +23,14 @@ class BrowserPlus(Browser):
         )]
 
     def _tree(self):
+        """Return the current page in a form that's actually useful (a HTML
+        element).
+        """
         return html.fromstring(self.response().read())
 
     def xpath(self, xpathstring):
+        """Call lxml's xpath function on the current page.
+        """
         return self._tree().xpath(xpathstring)
 
     def has(self, msg):
@@ -75,7 +86,7 @@ class BrowserPlus(Browser):
         """
         try:
             return self.follow_link(text_regex=text)
-        except:
+        except LinkNotFoundError:
             _log.error("Can't find link with text '%s'", text)
             return None
 
