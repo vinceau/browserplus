@@ -65,7 +65,7 @@ def process(inFile, append_name=True):
         courseToWrite.append(row["Course Identifier"].split("_")[0]
                 + SHORT_NAME_DICT[row["Session"]])
         
-        courseToWrite +=  [row["Course Title"], "Live",
+        courseToWrite +=  [row["Title"], "Live",
                 DEPARTMENT_DICT[row["Department"]], row["Start Date"],
                 row["End Date"], row["Course Identifier"], "Australia/Sydney",
                 row["Designation"].split("-")[0],
