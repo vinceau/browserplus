@@ -361,11 +361,17 @@ def transform_course(shortname):
 def _get_secret_key():
     _require_login()
     _browser.open('https://anu.campusconcourse.com/admin_process_feed')
-    return _browser.find('#shared_secret').get('value')
+    secret = _browser.find('#shared_secret')
+    if secret:
+        return secret.get('value')
+    return None
 
 def process_feed(feedtype, filename):
     url = "https://anu.campusconcourse.com/process_feed_file"
     secret = _get_secret_key()
+    if not secret:
+        _log.error('It appears you lack the necessary permissions to process'
+                   'feeds. Talk to your system administrator and try again')
 
     #HMAC=`cat $FILENAME | openssl dgst -sha256 -hmac $SECRET | cut -d' ' -f2`
     p1 = Popen(['cat', filename], stdout=PIPE)
