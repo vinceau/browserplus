@@ -53,9 +53,7 @@ class BrowserPlus(Browser):
         if it exists and None otherwise
         """
         e = self.find_all(css)
-        if e:
-            return e[0]
-        return None
+        return e[0] if e else None
 
     def find_all(self, css):
         """Returns a list of all elements that match the css selector
@@ -68,9 +66,7 @@ class BrowserPlus(Browser):
         the first <a> tag with a link to google.
         """
         e = self.get_all(element, attr, value)
-        if e:
-            return e[0]
-        return None
+        return e[0] if e else None
 
     def get_all(self, element, attr, value):
         """Returns a list of all 'element' tags with 'value' as their attribute
