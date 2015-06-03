@@ -41,12 +41,16 @@ class BrowserPlus(Browser):
     def select_form_by(self, attr, search):
         """Usage: BrowserPlus.select_form_by('id', 'login')
         """
-        formcount = 0
-        for frm in self.forms():
-            if str(frm.attrs[attr]) == search:
-                break
-            formcount += 1
-        return self.select_form(nr=formcount)
+        try:
+            formcount = 0
+            for frm in self.forms():
+                if frm.attrs[attr] == search:
+                    break
+                formcount += 1
+            return self.select_form(nr=formcount)
+        except KeyError:
+            _log.error('Failed to find form with the %s "%s"', attr, search)
+            return False
 
     def find(self, css):
         """Returns the first occurence of an element matching the css selector
