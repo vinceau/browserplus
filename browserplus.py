@@ -2,12 +2,12 @@
 scrape information from the mechanize browser.
 """
 import logging
-import sys
-from mechanize import Browser, LinkNotFoundError
 from lxml import html
+from mechanize import Browser, LinkNotFoundError
+from sys import stdout
 
 _log = logging.getLogger(__name__)
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logging.basicConfig(stream=stdout, level=logging.DEBUG)
 
 class BrowserPlus(Browser):
     """BrowserPlus extends the mechanize Browser providing extra functions and
