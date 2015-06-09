@@ -90,11 +90,14 @@ class BrowserPlus(Browser):
             _log.error("Can't find link with text '%s'", text)
             return None
 
-    def show(self):
+    def show(self, prettify=True):
         """Prints the source of the current page in a pretty format. The
         prettifying means what you see is not necessarily what you have. Also, a
         newline is also appended to the output.
         """
         if self.response() is not None:
-            print(etree.tostring(self._tree(), pretty_print=True))
+            if prettify:
+                print(etree.tostring(self._tree(), pretty_print=True))
+            else:
+                print(self.response().read())
 
