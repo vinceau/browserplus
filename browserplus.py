@@ -91,9 +91,8 @@ class BrowserPlus(Browser):
             return None
 
     def show(self, prettify=True):
-        """Prints the source of the current page in a pretty format. The
-        prettifying means what you see is not necessarily what you have. Also, a
-        newline is also appended to the output.
+        """Prints the source of the current page. If prettify is True then it
+        will print it prettily and append a newline to the output.
         """
         if self.response() is not None:
             if prettify:
