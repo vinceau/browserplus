@@ -1,5 +1,8 @@
 """BrowserPlus is a module which utilises lxml to provide simple methods to
 scrape information from the mechanize browser.
+
+Vincent Au (c) 2015
+vinceau/browserplus
 """
 import logging
 from lxml import etree, html
@@ -67,7 +70,7 @@ class BrowserPlus(Browser):
     def get(self, element, attr, value):
         """Returns the first 'element' tag with 'value' as their attribute
         'attr'. e.g. get('a', 'href', 'http://google.com') will return
-        the first <a> tag with a link to google.
+        the first <a> tag with a link to Google.
         """
         e = self.get_all(element, attr, value)
         return e[0] if e else None
@@ -75,14 +78,14 @@ class BrowserPlus(Browser):
     def get_all(self, element, attr, value):
         """Returns a list of all 'element' tags with 'value' as their attribute
         'attr'. e.g. get_all('a', 'href', 'http://google.com') will return
-        a list of all the <a> tags with links to google.
+        a list of all the <a> tags with links to Google.
         """
         return self.xpath("//%s[@%s='%s']" % (element, attr, value))
 
     def go(self, text):
         """Follow the link (a href) containing certain text.
-        e.g. <a href="http://foo.bar">foobar</a> BrowserPlus.go('foobar') will
-        open the link htp://foo.bar
+        e.g. <a href="http://google.com">Google</a> BrowserPlus.go('Google')
+        will open a link to Google.
         """
         try:
             return self.follow_link(text_regex=text)
