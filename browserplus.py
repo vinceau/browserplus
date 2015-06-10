@@ -11,8 +11,8 @@ logging.basicConfig(stream=stdout, level=logging.DEBUG)
 
 class BrowserPlus(Browser):
     """BrowserPlus extends the mechanize Browser providing extra functions and
-    robot handling by default. Has all the methods of the mechanize Browser
-    obviously but also has the web scraping capabilities of lxml.
+    robot handling by default. It obviously has all the methods of the
+    mechanize Browser but it also has the web scraping capabilities of lxml.
     """
     def __init__(self):
         Browser.__init__(self)
@@ -92,7 +92,8 @@ class BrowserPlus(Browser):
 
     def show(self, prettify=True):
         """Prints the source of the current page. If prettify is True then it
-        will print it prettily and append a newline to the output.
+        will print it prettily and append a newline to the output. Otherwise it
+        will just print the raw source of the page.
         """
         if self.response() is not None:
             if prettify:
