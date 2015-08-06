@@ -103,6 +103,19 @@ using:
 
     bp.submit()
 
+Sometimes you might have multiple submit buttons, for example:
+
+.. code:: html
+
+    <input type="submit" value="Save"></input>
+    <input type="submit" value="Preview"></input>
+
+In that case you could use:
+
+.. code:: python
+
+    bp.submit(label="Save") #or Preview if you wanted that one
+
 Finding text
 ~~~~~~~~~~~~
 
@@ -115,6 +128,29 @@ done using the ``has()`` method.
     #ensure login was successful
     msg = 'Login successful'
     assert(bp.has(msg)) 
+
+Getting element text and attributes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Say we had the following HTML which we wanted to extract text or
+attributes from:
+
+.. code:: html
+
+    <div class="content">
+        <h1 title="hello hello">Generic Title</h1>
+    </div>
+
+You could do the following:
+
+.. code:: python
+
+    #to get the text inside the h1 element
+    header = bp.find('div.content h1')
+    header_text = header.text #Generic Title
+
+    #and to get the contents of the title attribute
+    header_title = header.attrib['title'] #hello hello
 
 Futher Reading
 --------------
