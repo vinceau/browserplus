@@ -1,1 +1,1 @@
-from browserplus import BrowserPlus
+from browserplus import BrowserPlus, __version__

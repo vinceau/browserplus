@@ -9,6 +9,8 @@ from lxml import etree, html
 from mechanize import Browser, LinkNotFoundError
 from sys import stdout
 
+__version__ = '0.0.1'
+
 _log = logging.getLogger(__name__)
 logging.basicConfig(stream=stdout, level=logging.DEBUG)
 
