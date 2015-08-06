@@ -41,6 +41,8 @@ class BrowserPlus(Browser):
     def has(self, msg):
         """This returns true if msg is contained in the browsers current page.
         """
+        if self.response() is None:
+            return False
         return msg in self.xpath('string()')
 
     def select_form_by(self, attr, search):
