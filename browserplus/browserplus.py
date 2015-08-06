@@ -108,3 +108,8 @@ class BrowserPlus(Browser):
             else:
                 print(self.response().read())
 
+    def url(self):
+        if self.response() is None:
+            return None
+        return self.response().geturl()
+
