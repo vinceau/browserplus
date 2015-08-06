@@ -6,30 +6,17 @@ Browser <http://www.joesourcecode.com/Documentation/mechanize0.2.5/mechanize._me
 and utilises `lxml <http://lxml.de/>`__ to provide simple methods to
 select elements from the current page.
 
-Dependencies
-------------
+Install
+-------
 
-BrowserPlus depends on the following packages:
-
--  `mechanize <http://wwwsearch.sourceforge.net/mechanize/>`__
--  `lxml <http://lxml.de/>`__
--  `cssselect <https://github.com/SimonSapin/cssselect/>`__
-
-You can install these packages by executing:
-``pip install mechanize lxml cssselect``
-
-Setup
------
-
-To install BrowserPlus, you can either download a copy of the
-`browserplus.py <https://raw.githubusercontent.com/vinceau/browserplus/master/browserplus.py>`__
-file and put it in the same directory as your project or you can clone
-the entire repo into same directory as your project using:
+To install BrowserPlus, in the command line, run:
 
 .. code:: bash
 
-    cd my_project
-    git clone https://github.com/vinceau/browserplus
+    pip install browserplus
+
+Setup
+-----
 
 Once you have a copy of BrowserPlus, you can import the package and
 create an instance using:
@@ -128,4 +115,13 @@ done using the ``has()`` method.
     #ensure login was successful
     msg = 'Login successful'
     assert(bp.has(msg)) 
+
+Futher Reading
+--------------
+
+Since BrowserPlus combines Mechanize and lxml, to better utilise
+BrowserPlus you may find the following links useful.
+
+-  `mechanize <http://wwwsearch.sourceforge.net/mechanize/>`__
+-  `lxml <http://lxml.de/>`__
 
